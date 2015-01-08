@@ -1,5 +1,8 @@
 package code.part1kl.keyworld.voxel;
 
+import code.part1kl.keyworld.utils.Float3;
+import code.part1kl.keyworld.world.World;
+
 /**A single unit in the game. Comprised of {@link code.part1kl.keyworld.material.Material Materials} that determine it's color and properties
  * 
  * @author part1kl
@@ -8,17 +11,37 @@ package code.part1kl.keyworld.voxel;
 public class Voxel {
 //TODO: add mass and other attributes
 	
-	private int ident;
+	public float mass;
+	public Float3 color;
+	public byte[] matTypes;
+	public int metadata;
 	
-	private float mass;
-	private int color;
-	private byte[] matTypes;
-	private int metadata;
-	
-	public Voxel(int id) {
-		matTypes = new byte[64];
+	public Voxel(byte[] materials) {
+		matTypes = materials;
+		createColor();
 	}
 	
-	/**Voxel identifier (based on type)*/
-	public int ID() { return ident; }
+	public void createColor() {
+		float a=0;
+		for(int i=0; i<64; i++) {
+			a += World.materials[matTypes[i]].COLOR.a;
+		}
+		System.out.println(a);
+		a = a/64f;
+		float b=0;
+		for(int i=0; i<64; i++) {
+			b += World.materials[matTypes[i]].COLOR.b;
+		}
+		b = b/64f;
+		float c=0;
+		for(int i=0; i<64; i++) {
+			c += World.materials[matTypes[i]].COLOR.c;
+		}
+		c = c/64f;
+		System.out.println(matTypes[0]+"-");
+		System.out.println(a);
+		System.out.println(b);
+		System.out.println(c);
+		color = new Float3(a, b, c);
+	}
 }

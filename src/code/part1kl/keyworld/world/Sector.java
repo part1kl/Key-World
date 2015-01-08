@@ -10,13 +10,22 @@ import code.part1kl.keyworld.voxel.Voxel;
 public class Sector {
 
 	/**The size of Sectors in {@link code.part1kl.keyworld.voxel.Voxel Voxels}*/
-	public final int SIZE = 20;
-	//TODO: Replace voxles array with something better using Point3D
+	public final static int SIZE = 20;
+	
 	/**Holds all Voxels in the sector
 	 */
-	private Voxel[] voxels;
+	public Voxel[][][] voxels;
+	public int xL, yL, zL;
 	
-	public Sector() {
-		voxels = new Voxel[SIZE*SIZE*SIZE];
+	public Sector(int x, int y, int z) {
+		voxels = new Voxel[SIZE][SIZE][SIZE];
+	}
+	
+	public void setVoxel(int x, int y, int z, Voxel v) {
+		voxels[x][y][z] = v;
+	}
+	
+	public Voxel getVoxel(int x, int y, int z) {
+		return voxels[x][y][z];
 	}
 }
