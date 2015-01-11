@@ -1,6 +1,6 @@
 package code.part1kl.keyworld.material;
 
-import code.part1kl.keyworld.utils.Float3;
+import code.part1kl.keyworld.utils.Float4;
 
 /**Materials hold properties that define how {@link code.part1kl.keyworld.voxel.Voxel Voxels} interact and behave
  * 
@@ -15,9 +15,9 @@ public class Material {
 	public boolean FLAMMABLE;
 	public boolean ORE;
 	public boolean NATURAL;
-	public Float3 COLOR;
+	public Float4 COLOR;
 	
-	public Material(byte id, float mass, String name, boolean flammable, boolean ore, boolean natural, Float3 color) {
+	public Material(byte id, float mass, String name, boolean flammable, boolean ore, boolean natural, Float4 color) {
 		ident = id;
 		MASS = mass;
 		NAME = name;

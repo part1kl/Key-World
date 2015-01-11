@@ -2,6 +2,7 @@ package code.part1kl.keyworld.world;
 
 import code.part1kl.keyworld.material.Material;
 import code.part1kl.keyworld.utils.Float3;
+import code.part1kl.keyworld.utils.Float4;
 
 /**The World object holds all of the sectors, voxels, materials and rules for running a world.
  * 
@@ -10,32 +11,46 @@ import code.part1kl.keyworld.utils.Float3;
  */
 public class World {
 	/**The size of default Worlds in {@link code.part1kl.keyworld.world.Sector Sectors}*/
-	public final int SIZE=1;
+	public static final int SIZE=2, WORLD_HEIGHT=20;
 	
-	public Sector[] sectors;
+	public Sector[][][] sectors;
 	private Generate generator;
 	
 	public World() {
-		sectors = new Sector[SIZE*SIZE*SIZE];
+		sectors = new Sector[SIZE][SIZE][SIZE];
 		generator = new Generate();
 		System.out.println("World created,");
 	}
 	
 	public void loadWorld() {
-		sectors[0] = generator.generate(0, 0, 0);
+		
+		for(int xi=0; xi<World.SIZE; xi++) {
+        	for(int yi=0; yi<World.SIZE; yi++) {
+        		for(int zi=0; zi<World.SIZE; zi++) {
+        			sectors[xi][yi][zi] = generator.generate(xi, yi, zi);
+        		}
+        	}
+		}
 		System.out.println("World Loaded");
 	}
 	
-	public static Material STONE, SAND;
-	public static Material[] materials = new Material[2];
+	public Sector getSector(int x, int y, int z) {
+		return sectors[x][y][z];
+	}
+	
+	public static Material AIR, STONE, SAND;
+	public static Material[] materials = new Material[3];
 	/**
 	 * Initializes {@link code.part1kl.keyworld.material.Material Materials} to be used in the game.
 	 */
+	//1.225/100mg per cm^3
 	public void initializeMaterials() {
-		STONE = new Material((byte) 0, 5.2734f, "stone", false, false, false, new Float3(0.3f, 0.3f, 0.3f));
-		SAND = new Material((byte) 1, 5.0781f, "sand", false, false, false, new Float3(.6f, .6f, .4f));
+		AIR = new Material((byte) 0, 0f, "air", false, false, false, new Float4(1f, 1f, 1f, 0.001f));
+		STONE = new Material((byte) 1, 5.2734f, "stone", false, false, false, new Float4(0.3f, 0.3f, 0.3f, 1.0f));
+		SAND = new Material((byte) 2, 5.0781f, "sand", false, false, false, new Float4(.6f, .6f, .4f, 1.0f));
 		
-		materials[0]=STONE;
-		materials[1]=SAND;
+		materials[0]=AIR;
+		materials[1]=STONE;
+		materials[2]=SAND;
 	}
 }
