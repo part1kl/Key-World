@@ -33,15 +33,18 @@ import static org.lwjgl.glfw.GLFW.glfwSwapInterval;
 import static org.lwjgl.glfw.GLFW.glfwTerminate;
 import static org.lwjgl.glfw.GLFW.glfwWindowHint;
 import static org.lwjgl.glfw.GLFW.glfwWindowShouldClose;
+import static org.lwjgl.opengl.GL11.GL_BLEND;
 import static org.lwjgl.opengl.GL11.GL_COLOR_ARRAY;
 import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
-import static org.lwjgl.opengl.GL11.GL_DIFFUSE;
 import static org.lwjgl.opengl.GL11.GL_FALSE;
 import static org.lwjgl.opengl.GL11.GL_FLOAT;
+import static org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_ALPHA;
 import static org.lwjgl.opengl.GL11.GL_QUADS;
+import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
 import static org.lwjgl.opengl.GL11.GL_TRUE;
 import static org.lwjgl.opengl.GL11.GL_VERTEX_ARRAY;
+import static org.lwjgl.opengl.GL11.glBlendFunc;
 import static org.lwjgl.opengl.GL11.glClear;
 import static org.lwjgl.opengl.GL11.glClearColor;
 import static org.lwjgl.opengl.GL11.glColorPointer;
@@ -50,14 +53,13 @@ import static org.lwjgl.opengl.GL11.glDrawArrays;
 import static org.lwjgl.opengl.GL11.glEnable;
 import static org.lwjgl.opengl.GL11.glEnableClientState;
 import static org.lwjgl.opengl.GL11.glLoadIdentity;
-import static org.lwjgl.opengl.GL11.glVertexPointer;
+import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL12.GL_RESCALE_NORMAL;
 import static org.lwjgl.opengl.GL15.GL_ARRAY_BUFFER;
 import static org.lwjgl.opengl.GL15.GL_STATIC_DRAW;
 import static org.lwjgl.opengl.GL15.glBindBuffer;
 import static org.lwjgl.opengl.GL15.glBufferData;
 import static org.lwjgl.opengl.GL15.glGenBuffers;
-import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
 import java.nio.ByteBuffer;
@@ -72,6 +74,7 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GLContext;
 
 import code.part1kl.keyworld.entity.Camera;
+import code.part1kl.keyworld.utils.Float3;
 import code.part1kl.keyworld.voxel.Voxel;
 import code.part1kl.keyworld.world.Sector;
 import code.part1kl.keyworld.world.World;
@@ -243,6 +246,8 @@ public class Launch {
         makeVBOs();
         
         glEnable(GL_RESCALE_NORMAL);
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         cam.rotateX(180f);
         cam.moveUp(2);
     }
@@ -289,6 +294,9 @@ public class Launch {
 //            		}
 //            	}
 //            }
+            glTranslatef((float)World.SIZE*Sector.SIZE/2f,(float)World.SIZE*Sector.SIZE/2f,(float)World.SIZE*Sector.SIZE/2f);
+            glRotatef(180, 1, 0, 0);
+            glTranslatef(-(float)World.SIZE*Sector.SIZE/2f,-(float)World.SIZE*Sector.SIZE/2f,-(float)World.SIZE*Sector.SIZE/2f);
             
             glDrawArrays(GL_QUADS, 0, verticiesNumber);
             
@@ -306,119 +314,20 @@ public class Launch {
             glfwPollEvents();
         }
     }
-    //Left(-x) Right(+x) Back(+z) Front(-z) Bottom(y+) Top(y-)
-    public boolean[] checkFaces(int x, int y, int z) {
-    	boolean[] surrounding = new boolean[6];
-    	
-    	for(int face = 0; face<6; face++) {
-    		switch(face) {
-    		case 0: //-
-    			if(x==0) {surrounding[face]=true;}
-    			else if(x%Sector.SIZE==0) {
-    				if(WORLD.getSector((x-(x%Sector.SIZE))/Sector.SIZE, (y-(y%Sector.SIZE))/Sector.SIZE, (z-(z%Sector.SIZE))/Sector.SIZE)
-    						.getVoxel((x-1)%Sector.SIZE, y%Sector.SIZE, z%Sector.SIZE).matTypes[0]==0) {
-    					surrounding[face]=true;
-    				}
-    			}
-    			else {
-    				if(WORLD.getSector((x-((x-1)%Sector.SIZE))/Sector.SIZE, (y-(y%Sector.SIZE))/Sector.SIZE, (z-(z%Sector.SIZE))/Sector.SIZE)
-    						.getVoxel(Sector.SIZE-1, y%Sector.SIZE, z%Sector.SIZE).matTypes[0]==0) {
-    					surrounding[face]=true;
-    				}
-    			}
-    			break;
-					    		case 1: //+
-					    			if(x==World.SIZE*Sector.SIZE-1) {surrounding[face]=true;}
-					    			else if(x%Sector.SIZE==0) {
-					    				if(WORLD.getSector((x-(x%Sector.SIZE))/Sector.SIZE, (y-(y%Sector.SIZE))/Sector.SIZE, (z-(z%Sector.SIZE))/Sector.SIZE)
-					    						.getVoxel((x+1)%Sector.SIZE, y%Sector.SIZE, z%Sector.SIZE).matTypes[0]==0) {
-					    					surrounding[face]=true;
-					    				}
-					    			}
-					    			else {
-					    				if(WORLD.getSector((x-((x+1)%Sector.SIZE))/Sector.SIZE+1, (y-(y%Sector.SIZE))/Sector.SIZE, (z-(z%Sector.SIZE))/Sector.SIZE)
-					    						.getVoxel(0, y%Sector.SIZE, z%Sector.SIZE).matTypes[0]==0) {
-					    					surrounding[face]=true;
-					    				}
-					    			}
-					    			break;
-    		case 2: //+
-    			if(z==World.SIZE*Sector.SIZE-1) {surrounding[face]=true;}
-    			else if(z%Sector.SIZE==0) {
-    				if(WORLD.getSector((x-(x%Sector.SIZE))/Sector.SIZE, (y-(y%Sector.SIZE))/Sector.SIZE, (z-(z%Sector.SIZE))/Sector.SIZE)
-    						.getVoxel(x%Sector.SIZE, y%Sector.SIZE, z%Sector.SIZE+1).matTypes[0]==0) {
-    					surrounding[face]=true;
-    				}
-    			}
-    			else {
-    				if(WORLD.getSector((x-(x%Sector.SIZE))/Sector.SIZE, (y-(y%Sector.SIZE))/Sector.SIZE, (z-((z+1)%Sector.SIZE))/Sector.SIZE)
-    						.getVoxel(x%Sector.SIZE, y%Sector.SIZE, 0).matTypes[0]==0) {
-    					surrounding[face]=true;
-    				}
-    			}
-    			break;
-						    		case 3: //-
-						    			if(z==0) {surrounding[face]=true;}
-						    			else if(z%Sector.SIZE==0) {
-						    				if(WORLD.getSector((x-(x%Sector.SIZE))/Sector.SIZE, (y-(y%Sector.SIZE))/Sector.SIZE, (z-(z%Sector.SIZE))/Sector.SIZE)
-						    						.getVoxel(x%Sector.SIZE, y%Sector.SIZE, (z-1)%Sector.SIZE).matTypes[0]==0) {
-						    					surrounding[face]=true;
-						    				}
-						    			}
-						    			else {
-						    				if(WORLD.getSector((x-(x%Sector.SIZE))/Sector.SIZE, (y-(y%Sector.SIZE))/Sector.SIZE, (z-((z-1)%Sector.SIZE))/Sector.SIZE)
-						    						.getVoxel(x%Sector.SIZE, y%Sector.SIZE, Sector.SIZE-1).matTypes[0]==0) {
-						    					surrounding[face]=true;
-						    				}
-						    			}
-						    			break;
-    		case 4: //+
-    			if(y==World.SIZE*Sector.SIZE-1) {surrounding[face]=true;}
-    			else if(y%Sector.SIZE==0) {
-    				if(WORLD.getSector((x-(x%Sector.SIZE))/Sector.SIZE, (y-(y%Sector.SIZE))/Sector.SIZE, (z-(z%Sector.SIZE))/Sector.SIZE)
-    						.getVoxel(x%Sector.SIZE, (y+1)%Sector.SIZE, z%Sector.SIZE).matTypes[0]==0) {
-    					surrounding[face]=true;
-    				}
-    			}
-    			else {
-    				if(WORLD.getSector((x-(x%Sector.SIZE))/Sector.SIZE, (y-((y+1)%Sector.SIZE))/Sector.SIZE, (z-(z%Sector.SIZE))/Sector.SIZE)
-    						.getVoxel(x%Sector.SIZE, 0, z%Sector.SIZE).matTypes[0]==0) {
-    					surrounding[face]=true;
-    				}
-    			}
-    			break;
-							    		case 5: //-
-							    			if(y==0) {surrounding[face]=true;}
-							    			else if(y%Sector.SIZE==0) {
-							    				if(WORLD.getSector((x-(x%Sector.SIZE))/Sector.SIZE, (y-(y%Sector.SIZE))/Sector.SIZE, (z-(z%Sector.SIZE))/Sector.SIZE)
-							    						.getVoxel(x%Sector.SIZE, (y-1)%Sector.SIZE, z%Sector.SIZE).matTypes[0]==0) {
-							    					surrounding[face]=true;
-							    				}
-							    			}
-							    			else {
-							    				if(WORLD.getSector((x-(x%Sector.SIZE))/Sector.SIZE, (y-((y-1)%Sector.SIZE))/Sector.SIZE, (z-(z%Sector.SIZE))/Sector.SIZE)
-							    						.getVoxel(x%Sector.SIZE, Sector.SIZE-1, z%Sector.SIZE).matTypes[0]==0) {
-							    					surrounding[face]=true;
-							    				}
-							    			}
-							    			break;
-    		}
-    	}
-    	
-    	return surrounding;
-    }
     
     
     private void makeVBOs() {
     	ArrayList<Float> verticies = new ArrayList<>();
     	ArrayList<Float> colors = new ArrayList<>();
-    	for(int xi=0; xi<World.SIZE; xi++) {
-        	for(int yi=0; yi<World.SIZE; yi++) {
-        		for(int zi=0; zi<World.SIZE; zi++) {
-	            	for(int x=0; x<Sector.SIZE; x++) {
-	            		for(int y=0; y<Sector.SIZE; y++) {
-	            			for(int z=0; z<Sector.SIZE; z++) {
-	            				boolean[] facez = checkFaces(xi*Sector.SIZE+x, yi*Sector.SIZE+y, zi*Sector.SIZE+z);
+    	for(int yi=0; yi<World.SIZE; yi++) {
+    		for(int y=0; y<Sector.SIZE; y++) {
+    			Float3 color = new Float3((float)Math.random(),(float)Math.random(),(float)Math.random());
+	    		for(int xi=0; xi<World.SIZE; xi++) {
+	    			for(int zi=0; zi<World.SIZE; zi++) {
+	        			Sector s = WORLD.getSector(xi, yi, zi);
+		            	for(int x=0; x<Sector.SIZE; x++) {
+		            		for(int z=0; z<Sector.SIZE; z++) {
+	            				boolean[] facez = s.checkFaces(x, y, z);
 	            				for(int face=0; face<6; face++) {
 	            					if(facez[face]) {
 	            						for(int vert = 0; vert<faces[face].length; vert+=3) {
@@ -426,10 +335,10 @@ public class Launch {
 	            							verticies.add(faces[face][vert+1]+(yi*Sector.SIZE+y));
 	            							verticies.add(faces[face][vert+2]+(zi*Sector.SIZE+z));
 	            							Voxel v = WORLD.getSector((x-(x%Sector.SIZE))/Sector.SIZE, (y-(y%Sector.SIZE))/Sector.SIZE, (z-(z%Sector.SIZE))/Sector.SIZE).getVoxel(x%Sector.SIZE, y%Sector.SIZE, z%Sector.SIZE);
-	            							colors.add(v.color.a);
-	            							colors.add(v.color.b);
-	            							colors.add(v.color.c);
-	            							colors.add(v.color.d);
+	            							colors.add(color.a);
+	            							colors.add(color.b);
+	            							colors.add(color.c);
+	            							colors.add(1f);
 	            						}
 	            					}
 	            				}

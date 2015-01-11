@@ -11,7 +11,7 @@ import code.part1kl.keyworld.utils.Float4;
  */
 public class World {
 	/**The size of default Worlds in {@link code.part1kl.keyworld.world.Sector Sectors}*/
-	public static final int SIZE=2, WORLD_HEIGHT=20;
+	public static final int SIZE=5, WORLD_HEIGHT=60;
 	
 	public Sector[][][] sectors;
 	private Generate generator;

@@ -9,9 +9,11 @@ public class Generate {
 	
 	Random r = new Random();
 	SimplexGeneration generateSim;
+	TerrainGeneration generateTer;
 	
 	public Generate() {
 		generateSim = new SimplexGeneration();
+		generateTer = new TerrainGeneration();
 	}
 	
 //	public Sector generate(int x, int y, int z) {
@@ -38,6 +40,9 @@ public class Generate {
 //	}
 	
 	public Sector generate(int x, int y, int z) {
-		return generateSim.generate(x, y, z);
+		Sector caves = generateSim.generate(x, y, z);
+		Sector out = generateTer.generate(x, y, z);
+		out.subtract(caves);
+		return out;
 	}
 }

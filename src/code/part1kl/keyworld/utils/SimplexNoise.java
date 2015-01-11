@@ -49,7 +49,7 @@ public class SimplexNoise {  // Simplex noise in 2D, 3D and 4D
   static {
     for(int i=0; i<512; i++)
     {
-      perm[i]=p[i & 255];
+      perm[i]=p[i & (int)(Math.random()*1000%255)];
       permMod12[i] = (short)(perm[i] % 12);
     }
   }
