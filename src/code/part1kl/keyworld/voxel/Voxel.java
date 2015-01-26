@@ -15,6 +15,7 @@ public class Voxel {
 	public Float4 color;
 	public byte[] matTypes;
 	public int metadata;
+	public final static int MATERIAL_AMOUNT = 1;
 	
 	public Voxel(byte[] materials) {
 		matTypes = materials;
@@ -23,26 +24,26 @@ public class Voxel {
 	
 	public void createColor() {
 		float a=0;
-		for(int i=0; i<64; i++) {
+		for(int i=0; i<MATERIAL_AMOUNT; i++) {
 			a += World.materials[matTypes[i]].COLOR.a;
 		}
 //		System.out.println(a);
-		a = a/64f;
+		a = a/MATERIAL_AMOUNT;
 		float b=0;
-		for(int i=0; i<64; i++) {
+		for(int i=0; i<MATERIAL_AMOUNT; i++) {
 			b += World.materials[matTypes[i]].COLOR.b;
 		}
-		b = b/64f;
+		b = b/MATERIAL_AMOUNT;
 		float c=0;
-		for(int i=0; i<64; i++) {
+		for(int i=0; i<MATERIAL_AMOUNT; i++) {
 			c += World.materials[matTypes[i]].COLOR.c;
 		}
-		c = c/64f;
+		c = c/MATERIAL_AMOUNT;
 		float d=0;
-		for(int i=0; i<64; i++) {
+		for(int i=0; i<MATERIAL_AMOUNT; i++) {
 			d += World.materials[matTypes[i]].COLOR.d;
 		}
-		d = d/64f;
+		d = d/MATERIAL_AMOUNT;
 //		System.out.println(matTypes[0]+"-");
 //		System.out.println(a);
 //		System.out.println(b);

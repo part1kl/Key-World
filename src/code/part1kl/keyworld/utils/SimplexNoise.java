@@ -46,10 +46,11 @@ public class SimplexNoise {  // Simplex noise in 2D, 3D and 4D
   // To remove the need for index wrapping, double the permutation table length
   private static short perm[] = new short[512];
   private static short permMod12[] = new short[512];
+  public static int SEED;
   static {
     for(int i=0; i<512; i++)
     {
-      perm[i]=p[i & (int)(Math.random()*1000%255)];
+      perm[i]=p[i & 255];
       permMod12[i] = (short)(perm[i] % 12);
     }
   }

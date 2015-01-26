@@ -54,7 +54,7 @@ public class Sector {
 	    	int[] surrounding = {-2, -2, -2, -2, -2, -2};
 			
 	    	Float3 minPos = new Float3(0,0,0);
-	    	Float3 maxPos = new Float3(World.SIZE-1, World.SIZE-1, World.SIZE-1);
+	    	Float3 maxPos = new Float3(World.SIZE-1, World.WORLD_SECTOR_HEIGHT-1, World.SIZE-1);
 	    	if(Launch.WORLD.getSector(xL , yL, zL).getVoxel(x, y, z).matTypes[0]==0) {
 	    		return new boolean[6];
 	    	}

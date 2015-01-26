@@ -1,9 +1,10 @@
 package code.part1kl.keyworld.world;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Random;
 
-import code.part1kl.keyworld.start.Launch;
-import code.part1kl.keyworld.voxel.Voxel;
+import code.part1kl.keyworld.utils.SimplexNoise;
 
 public class Generate {
 	
@@ -11,9 +12,10 @@ public class Generate {
 	SimplexGeneration generateSim;
 	TerrainGeneration generateTer;
 	
-	public Generate() {
+	public Generate(int seed) {
 		generateSim = new SimplexGeneration();
 		generateTer = new TerrainGeneration();
+		SimplexNoise.SEED = seed;
 	}
 	
 //	public Sector generate(int x, int y, int z) {
@@ -41,8 +43,8 @@ public class Generate {
 	
 	public Sector generate(int x, int y, int z) {
 		Sector caves = generateSim.generate(x, y, z);
-		Sector out = generateTer.generate(x, y, z);
-		out.subtract(caves);
-		return out;
+//		Sector out = generateTer.generate(x, y, z);
+//		out.subtract(caves);		
+		return caves;
 	}
 }

@@ -11,21 +11,21 @@ import code.part1kl.keyworld.utils.Float4;
  */
 public class World {
 	/**The size of default Worlds in {@link code.part1kl.keyworld.world.Sector Sectors}*/
-	public static final int SIZE=5, WORLD_HEIGHT=60;
+	public static final int SIZE=12, WORLD_SECTOR_HEIGHT=4, WORLD_HEIGHT=50;
 	
 	public Sector[][][] sectors;
 	private Generate generator;
 	
 	public World() {
-		sectors = new Sector[SIZE][SIZE][SIZE];
-		generator = new Generate();
+		sectors = new Sector[SIZE][WORLD_SECTOR_HEIGHT][SIZE];
+		generator = new Generate((int)Math.random());
 		System.out.println("World created,");
 	}
 	
 	public void loadWorld() {
 		
 		for(int xi=0; xi<World.SIZE; xi++) {
-        	for(int yi=0; yi<World.SIZE; yi++) {
+        	for(int yi=0; yi<World.WORLD_SECTOR_HEIGHT; yi++) {
         		for(int zi=0; zi<World.SIZE; zi++) {
         			sectors[xi][yi][zi] = generator.generate(xi, yi, zi);
         		}

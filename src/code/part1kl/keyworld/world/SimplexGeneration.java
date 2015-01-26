@@ -19,18 +19,20 @@ public class SimplexGeneration {
 		for(int xi=0; xi<Sector.SIZE; xi++) {
 			for(int zi=0; zi<Sector.SIZE; zi++) {
 				for(int yi=Sector.SIZE-1; yi>=0; yi--) {
-					double h = SimplexNoise.noise(x+(xi*.05)/2, y+(yi*.05)/2, z+(zi*.05))/2;
-//					h += (y*Sector.SIZE+yi>World.WORLD_HEIGHT ? -.5:.5);
-					h-=.2;
+					double elevation = SimplexNoise.noise((double)(x*Sector.SIZE+xi)/Sector.SIZE*2, (double)(y*Sector.SIZE+yi)/Sector.SIZE*2, (double)(z*Sector.SIZE+zi)/Sector.SIZE*2)/2;
+					
+					double h = elevation;
+//					h += (y*Sector.SIZE+yi>World.WORLD_HEIGHT ? -.2:.2);
+//					h-=.25;
 //					System.out.println("SIMPLEX_RESULT"+h);
-					byte[] materials = new byte[64];
+					byte[] materials = new byte[Voxel.MATERIAL_AMOUNT];
 					byte e;
 					if(h>0)
 						e = (byte) (r.nextBoolean() ? 1:2);
 					else
 						e = 0;
 //					System.out.println("_"+e);
-					for(int i=0; i<64; i++) {
+					for(int i=0; i<Voxel.MATERIAL_AMOUNT; i++) {
 						materials[i]=World.materials[e].ident;
 					}
 					Voxel v = new Voxel(materials);
